@@ -1,4 +1,6 @@
 #include "TestBankApi.h"
+#ifdef TEST_BANK_API
+
 using namespace BearBank;
 
 TestBankApi::TestBankApi()
@@ -43,7 +45,7 @@ bool BearBank::TestBankApi::CheckPinValid(const std::string cardNumber, const st
 		}
 		assert(cardNumber[i] >= '0' && cardNumber[i] <= '9');
 	}
-	
+
 	// Check if the card number exists in the map
 	assert(mCardPinMap.find(cardNumber) != mCardPinMap.end());
 
@@ -51,7 +53,7 @@ bool BearBank::TestBankApi::CheckPinValid(const std::string cardNumber, const st
 	{
 		return true;
 	}
-	else 
+	else
 	{
 		return false;
 	}
@@ -120,3 +122,5 @@ eErrorCode BearBank::TestBankApi::SetAccountBalance(const std::string accountCod
 		return eErrorCode::Success;
 	}
 }
+
+#endif // TEST_BANK_API

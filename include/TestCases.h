@@ -7,6 +7,8 @@ using namespace BearBank;
 
 inline void TestCase1()
 {
+	std::cout << "------------------------" << std::endl;
+	std::cout << "TestCases 1" << std::endl;
 	// insert card with invalid card number
 	AtmController& atmController = AtmController::GetInstance();
 	std::cout << "Test insterting card with invalid card number" << std::endl;
@@ -23,11 +25,13 @@ inline void TestCase1()
 		assert(false);
 		return;
 	}
-	std::cout << "Test passed" << std::endl;
+	std::cout << "Test1 passed" << std::endl;
 	atmController.EjectCard();
 }
 inline void TestCase2()
 {
+	std::cout << "------------------------" << std::endl;
+	std::cout << "TestCases 2" << std::endl;
 	// insert correct card number
 	AtmController& atmController = AtmController::GetInstance();
 	std::cout << "Test insterting card with valid card number" << std::endl;
@@ -61,11 +65,14 @@ inline void TestCase2()
 		assert(false);
 		return;
 	}
-	std::cout << "Test passed" << std::endl;
 	atmController.EjectCard();
+	std::cout << "Test2 passed" << std::endl;
+
 }
 inline void TestCase3()
 {
+	std::cout << "------------------------" << std::endl;
+	std::cout << "TestCases 3" << std::endl;
 	// insert correct card number
 	AtmController& atmController = AtmController::GetInstance();
 	std::cout << "Test insterting card with valid card number" << std::endl;
@@ -150,9 +157,12 @@ inline void TestCase3()
 		return;
 	}
 	atmController.EjectCard();
+	std::cout << "Test3 passed" << std::endl;
 }
 inline void TestCase4()
 {
+	std::cout << "------------------------" << std::endl;
+	std::cout << "TestCases 4" << std::endl;
 	AtmController& atmController = AtmController::GetInstance();
 	std::cout << "Test insterting card with valid card number" << std::endl;
 	eErrorCode result = atmController.InsertCard("1234-5678-1234-5678");
@@ -231,4 +241,13 @@ inline void TestCase4()
 #endif // TEST_BANK_API
 
 	atmController.EjectCard();
+	std::cout << "Test4 passed" << std::endl;
+}
+
+inline void TestCases()
+{
+	TestCase1();
+	TestCase2();
+	TestCase3();
+	TestCase4();
 }

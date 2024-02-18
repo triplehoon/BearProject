@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <cassert>
 
 #include "Account.h"
 
@@ -19,7 +20,7 @@ namespace BearBank
 		~AtmController();
 
 		std::vector<Account> mAccounts;
-		
+
 		// if no account is selected, mSelectedAccountIndex is -1
 		int mSelectedAccountIndex;
 
