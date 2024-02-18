@@ -5,8 +5,10 @@ This code is Atm Control code for bear robotics assignment.
 
 # Requirements
 
+- based on ubuntu
 - C++11
 - CMake
+- g++
 
 # How To Clone
 
@@ -18,6 +20,7 @@ git clone {repo}
 # How To Build
 
 ```bash
+sudo apt install g++ cmake
 cd {repo}
 mkdir build
 cd build
