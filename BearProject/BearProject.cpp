@@ -1,41 +1,254 @@
-﻿// BearProject.cpp : 이 파일에는 'main' 함수가 포함됩니다. 거기서 프로그램 실행이 시작되고 종료됩니다.
-//
-/*
-Implement a simple ATM controller
-Write code for a simple ATM. It doesn't need any UI (either graphical or console), but a controller should be implemented and tested.
+﻿#include <iostream>
 
+#include "AtmController.h"
 
+using namespace BearBank;
 
-Requirements
-At least the following flow should be implemented:
-Insert Card => PIN number => Select Account => See Balance/Deposit/Withdraw
-For simplification, there are only 1 dollar bills in this world, no cents. Thus account balance can be represented in integer.
-Your code doesn't need to integrate with a real bank system, but keep in mind that we may want to integrate it with a real bank system in the future. It doesn't have to integrate with a real cash bin in the ATM, but keep in mind that we'd want to integrate with that in the future. And even if we integrate it with them, we'd like to test our code. Implementing bank integration and ATM hardware like cash bin and card reader is not a scope of this task, but testing the controller part (not including bank system, cash bin etc) is within the scope.
+void TestCase1()
+{
+	// insert card with invalid card number
+	AtmController& atmController = AtmController::GetInstance();
+	std::cout << "Test insterting card with invalid card number" << std::endl;
+	eErrorCode result = atmController.InsertCard("1234-56789-1234-544");
+	if (result != eErrorCode::InvalidCardNumber)
+	{
+		std::cout << "Test failed: " << "InvalidCardNumber 1" << std::endl;
+		assert(false);
+		return;
+	}
+	if (eErrorCode::NoCardInserted != atmController.EnterPin("1234"))
+	{
+		std::cout << "Test failed: " << "InvalidCardNumber 2" << std::endl;
+		assert(false);
+		return;
+	}
+	std::cout << "Test passed" << std::endl;
+	atmController.EjectCard();
+}
+void TestCase2()
+{
+	// insert correct card number
+	AtmController& atmController = AtmController::GetInstance();
+	std::cout << "Test insterting card with valid card number" << std::endl;
+	eErrorCode result = atmController.InsertCard("1234-5678-1234-5678");
+	if (result != eErrorCode::Success)
+	{
+		std::cout << "Test failed: " << "validCardNumber 1" << std::endl;
+	}
 
-A bank API wouldn't give the ATM the PIN number, but it can tell you if the PIN number is correct or not.
-Based on your work, another engineer should be able to implement the user interface. You don't need to implement any REST API, RPC, network communication etc, but just functions/classes/methods, etc.
-You can simplify some complex real world problems if you think it's not worth illustrating in the project.
+	// enter invalid pin
+	result = atmController.EnterPin("2345");
+	if (result != eErrorCode::InvalidPin)
+	{
+		std::cout << "Test failed: " << "InvalidPin 1" << std::endl;
+		assert(false);
+		return;
+	}
 
-How to submit
-Please upload the code for this project to GitHub or anywhere, and post a link to your repository below. 
-Please attach the instruction to clone your project, build and run tests in README.md file in the root directory of the repository. 
-Please attach the test code(or Test Case), too.
-*/
+	// enter invalid pin for 4 times more
+	for (int i = 0; i < 4; ++i)
+	{
+		atmController.EnterPin("2345");
+	}
 
-#include <iostream>
+	// if card is exist it is fail
+	std::string cardNumber = "";
+	result = atmController.GetCurrentCardNumber(&cardNumber);
+	if (result != eErrorCode::NoCardInserted)
+	{
+		std::cout << "Test failed: " << "InvalidPin 2" << std::endl;
+		assert(false);
+		return;
+	}
+	std::cout << "Test passed" << std::endl;
+	atmController.EjectCard();
+}
+void TestCase3()
+{
+	// insert correct card number
+	AtmController& atmController = AtmController::GetInstance();
+	std::cout << "Test insterting card with valid card number" << std::endl;
+	eErrorCode result = atmController.InsertCard("1234-5678-1234-5678");
+	if (result != eErrorCode::Success)
+	{
+		std::cout << "Test failed: " << "validCardNumber 1" << std::endl;
+	}
+
+	// enter valid pin
+	result = atmController.EnterPin("1234");
+	if (result != eErrorCode::Success)
+	{
+		std::cout << "Test failed: " << "validPin 1" << std::endl;
+		assert(false);
+		return;
+	}
+
+	// get accounts
+	std::vector<std::string> accountList;
+	result = atmController.ListAccountCodes(&accountList);
+	if (result != eErrorCode::Success)
+	{
+		std::cout << "Test failed: " << "ListAccountCodes 1" << std::endl;
+		assert(false);
+		return;
+	}
+	if (accountList.size() != 2)
+	{
+		std::cout << "Test failed: " << "ListAccountCodes 2" << std::endl;
+		assert(false);
+		return;
+	}
+	if (accountList[0] != "1234-56789" || accountList[1] != "1234-56788")
+	{
+		std::cout << "Test failed: " << "ListAccountCodes 3" << std::endl;
+		assert(false);
+		return;
+	}
+
+	// get balance for each account
+	result = atmController.SelectAccount(0);
+	if (result != eErrorCode::Success)
+	{
+		std::cout << "Test failed: " << "SelectAccount 1" << std::endl;
+		assert(false);
+		return;
+	}
+	result = atmController.SelectAccount("1234-56788");
+	if (result != eErrorCode::Success)
+	{
+		std::cout << "Test failed: " << "SelectAccount 2" << std::endl;
+		assert(false);
+		return;
+	}
+	std::string accountCode = "";
+	result = atmController.GetCurrentAccountCode(&accountCode);
+	if (result != eErrorCode::Success)
+	{
+		std::cout << "Test failed: " << "GetCurrentAccountCode 1" << std::endl;
+		assert(false);
+		return;
+	}
+	if (accountCode != "1234-56788")
+	{
+		std::cout << "Test failed: " << "GetCurrentAccountCode 2" << std::endl;
+		assert(false);
+		return;
+	}
+	size_t balance = 0;
+	result = atmController.GetBalance(&balance);
+	if (result != eErrorCode::Success)
+	{
+		std::cout << "Test failed: " << "GetBalance 1" << std::endl;
+		assert(false);
+		return;
+	}
+	if (balance != 200)
+	{
+		std::cout << "Test failed: " << "GetBalance 2" << std::endl;
+		assert(false);
+		return;
+	}
+	atmController.EjectCard();
+}
+void TestCase4()
+{
+	AtmController& atmController = AtmController::GetInstance();
+	std::cout << "Test insterting card with valid card number" << std::endl;
+	eErrorCode result = atmController.InsertCard("1234-5678-1234-5678");
+	result = atmController.EnterPin("1234");
+	std::vector<std::string> accountList;
+	result = atmController.ListAccountCodes(&accountList);
+	result = atmController.SelectAccount(0);
+
+	// test deposit
+	std::cout << "Test deposit" << std::endl;
+	size_t balance = 0;
+	result = atmController.GetBalance(&balance);
+	if (result != eErrorCode::Success)
+	{
+		std::cout << "Test failed: " << "GetBalance 1" << std::endl;
+		assert(false);
+		return;
+	}
+	if (balance != 100)
+	{
+		std::cout << "Test failed: " << "GetBalance 2" << std::endl;
+		assert(false);
+		return;
+	}
+	result = atmController.Deposit(100);
+	if (result != eErrorCode::Success)
+	{
+		std::cout << "Test failed: " << "Deposit 1" << std::endl;
+		assert(false);
+		return;
+	}
+	result = atmController.GetBalance(&balance);
+	if (result != eErrorCode::Success)
+	{
+		std::cout << "Test failed: " << "GetBalance 3" << std::endl;
+		assert(false);
+		return;
+	}
+	if (balance != 200)
+	{
+		std::cout << "Test failed: " << "GetBalance 4" << std::endl;
+		assert(false);
+		return;
+	}
+	//test withdraw
+	std::cout << "Test withdraw" << std::endl;
+	result = atmController.Withdraw(300);
+	if (result != eErrorCode::InsufficientBalance)
+	{
+		std::cout << "Test failed: " << "Withdraw 1" << std::endl;
+		assert(false);
+		return;
+	}
+	result = atmController.Withdraw(100);
+	if (result != eErrorCode::Success)
+	{
+		std::cout << "Test failed: " << "Withdraw 2" << std::endl;
+		assert(false);
+		return;
+	}
+	result = atmController.GetBalance(&balance);
+	if (result != eErrorCode::Success)
+	{
+		std::cout << "Test failed: " << "GetBalance 5" << std::endl;
+		assert(false);
+		return;
+	}
+	if (balance != 100)
+	{
+		std::cout << "Test failed: " << "GetBalance 6" << std::endl;
+		assert(false);
+		return;
+	}
+#ifdef TEST_BANK_API
+	TestBankApi::GetInstance().SetDefaultData();
+#endif // TEST_BANK_API
+
+	atmController.EjectCard();
+}
 
 int main()
 {
-    std::cout << "Hello World!\n";
+	/*
+	mCardPinMap["1234-5678-1234-5678"] = "1234";
+	mCardPinMap["9876-5432-9876-5432"] = "9876";
+
+	mCardAccountMap["1234-5678-1234-5678"] = { "1234-56789", "1234-56788" };
+	mCardAccountMap["9876-5432-9876-5432"] = { "9876-54321", "9876-54322" };
+
+	mAccountBalanceMap["1234-56789"] = 100;
+	mAccountBalanceMap["1234-56788"] = 200;
+	mAccountBalanceMap["9876-54321"] = 300;
+	mAccountBalanceMap["9876-54322"] = 400;
+	*/
+	// write test code with abvode information
+	TestCase1();
+	TestCase2();
+	TestCase3();
+	TestCase4();	
 }
-
-// 프로그램 실행: <Ctrl+F5> 또는 [디버그] > [디버깅하지 않고 시작] 메뉴
-// 프로그램 디버그: <F5> 키 또는 [디버그] > [디버깅 시작] 메뉴
-
-// 시작을 위한 팁: 
-//   1. [솔루션 탐색기] 창을 사용하여 파일을 추가/관리합니다.
-//   2. [팀 탐색기] 창을 사용하여 소스 제어에 연결합니다.
-//   3. [출력] 창을 사용하여 빌드 출력 및 기타 메시지를 확인합니다.
-//   4. [오류 목록] 창을 사용하여 오류를 봅니다.
-//   5. [프로젝트] > [새 항목 추가]로 이동하여 새 코드 파일을 만들거나, [프로젝트] > [기존 항목 추가]로 이동하여 기존 코드 파일을 프로젝트에 추가합니다.
-//   6. 나중에 이 프로젝트를 다시 열려면 [파일] > [열기] > [프로젝트]로 이동하고 .sln 파일을 선택합니다.
