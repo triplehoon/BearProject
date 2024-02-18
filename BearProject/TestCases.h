@@ -1,10 +1,11 @@
-﻿#include <iostream>
+#pragma once
+#include <iostream>
 
 #include "AtmController.h"
 
 using namespace BearBank;
 
-void TestCase1()
+inline void TestCase1()
 {
 	// insert card with invalid card number
 	AtmController& atmController = AtmController::GetInstance();
@@ -25,7 +26,7 @@ void TestCase1()
 	std::cout << "Test passed" << std::endl;
 	atmController.EjectCard();
 }
-void TestCase2()
+inline void TestCase2()
 {
 	// insert correct card number
 	AtmController& atmController = AtmController::GetInstance();
@@ -63,7 +64,7 @@ void TestCase2()
 	std::cout << "Test passed" << std::endl;
 	atmController.EjectCard();
 }
-void TestCase3()
+inline void TestCase3()
 {
 	// insert correct card number
 	AtmController& atmController = AtmController::GetInstance();
@@ -150,7 +151,7 @@ void TestCase3()
 	}
 	atmController.EjectCard();
 }
-void TestCase4()
+inline void TestCase4()
 {
 	AtmController& atmController = AtmController::GetInstance();
 	std::cout << "Test insterting card with valid card number" << std::endl;
@@ -230,25 +231,4 @@ void TestCase4()
 #endif // TEST_BANK_API
 
 	atmController.EjectCard();
-}
-
-int main()
-{
-	/*
-	mCardPinMap["1234-5678-1234-5678"] = "1234";
-	mCardPinMap["9876-5432-9876-5432"] = "9876";
-
-	mCardAccountMap["1234-5678-1234-5678"] = { "1234-56789", "1234-56788" };
-	mCardAccountMap["9876-5432-9876-5432"] = { "9876-54321", "9876-54322" };
-
-	mAccountBalanceMap["1234-56789"] = 100;
-	mAccountBalanceMap["1234-56788"] = 200;
-	mAccountBalanceMap["9876-54321"] = 300;
-	mAccountBalanceMap["9876-54322"] = 400;
-	*/
-	// write test code with abvode information
-	TestCase1();
-	TestCase2();
-	TestCase3();
-	TestCase4();	
 }
