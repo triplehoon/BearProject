@@ -17,7 +17,9 @@ Based on your work, another engineer should be able to implement the user interf
 You can simplify some complex real world problems if you think it's not worth illustrating in the project.
 
 How to submit
-Please upload the code for this project to GitHub or anywhere, and post a link to your repository below. Please attach the instruction to clone your project, build and run tests in README.md file in the root directory of the repository. Please attach the test code(or Test Case), too.
+Please upload the code for this project to GitHub or anywhere, and post a link to your repository below. 
+Please attach the instruction to clone your project, build and run tests in README.md file in the root directory of the repository. 
+Please attach the test code(or Test Case), too.
 */
 
 #include <iostream>
